@@ -27,6 +27,122 @@ SMODS.current_mod.optional_features = function()
 end
 
 ----------------------------------------------
+-- CARD EFFECT TEMPLATES
+----------------------------------------------
+--[[
+WHEN does calculate() fire? (context flags to check)
+-------------------------------------------------------------------------------
+  context.joker_main            -- true during the main joker-scoring
+                                    stage, after all cards are scored.
+                                    Most "if you played X" jokers hook here.
+
+  context.using_consumeable     -- true the instant a Tarot/Planet/Spectral
+                                    is used. Unrelated to scoring entirely.
+
+  context.consumeable            -- the actual consumable card being used
+                                    (only valid inside using_consumeable).
+
+  context.poker_hands['Flush']  -- array of cards forming that hand THIS
+                                    play; empty (not nil) if not played.
+                                    Use next(...) to check non-empty.
+
+  context.post_trigger          -- fires right after ANOTHER card/joker's
+                                    own calculate() has run. Requires:
+                                      SMODS.current_mod.optional_features
+                                        = function() return {post_trigger=true} end
+
+  context.other_context          -- the context the OTHER card triggered
+                                    under (e.g. check .joker_main on it).
+
+  context.other_card              -- the card that just triggered.
+
+  context.other_ret                -- return table from that trigger.
+                                    CONFIRMED BY TESTING: the actual values
+                                    are nested under context.other_ret.jokers,
+                                    NOT at the top level. Always guard:
+                                      local vals = context.other_ret.jokers or {}
+
+WHAT to put in the table you return (effects applied)
+-------------------------------------------------------------------------------
+  chip_mod   = 10   -- adds Chips (additive)
+  mult_mod   = 10   -- adds Mult (additive)
+  Xmult_mod  = 2    -- MULTIPLIES current Mult (multiplicative — note
+                        capital X). To "double" an xmult you see from
+                        another joker, return Xmult_mod = 2 fresh,
+                        don't repeat their value (that would square it).
+
+  dollars    = 3    -- adds money, unrelated to scoring
+  message    = "+10 Mult"   -- cosmetic popup text
+  colour     = G.C.MULT     -- popup color (G.C.MULT/G.C.CHIPS/G.C.MONEY/G.C.RED)
+
+IDENTIFYING cards/jokers
+-------------------------------------------------------------------------------
+  card.config.center.key      -- internal id, e.g. "j_myjm_amplifier"
+                                  (SMODS.Joker keys get auto-prefixed with
+                                  your mod's json "prefix"; ConsumableType/
+                                  Rarity keys do NOT, so keep those unique
+                                  yourself)
+
+  card.config.center.rarity   -- 1=Common, 2=Uncommon, 3=Rare, 4=Legendary
+                                  (or a custom SMODS.Rarity key string)
+
+  card.ability.set            -- 'Joker' / 'Planet' / 'Tarot' / 'Spectral'
+                                  / a custom SMODS.ConsumableType key
+
+-- PERSISTENT per-card storage (e.g. Fortune-Teller-style counters)
+  config = { extra = { mult = 0 } }   -- seeds card.ability.extra.mult = 0
+                                        on creation; read/write it any time
+                                        from within calculate via
+                                        card.ability.extra.mult
+
+SPRITES
+-------------------------------------------------------------------------------
+  SMODS.Atlas{ key=, path=, px=, py= }  -- ONE call, registers ONE image
+                                          file sliced into a px-by-py grid.
+                                          To add more sprites: widen/heighten
+                                          the PNG (more tiles), don't add a
+                                          second Atlas entry.
+
+  pos = { x = 0, y = 0 }                -- which tile a joker uses, 0-indexed,
+                                          left-to-right/top-to-bottom.
+
+  disable_mipmap = true                 -- add to Atlas{} if you see color
+                                          bleeding between tiles at small
+                                          render sizes.
+]]
+
+----------------------------------------------
+-- PLACE MODDED CARDS HERE!! 
+----------------------------------------------
+-- Copy this template to help create the base of a new modded card.
+--[[
+SMODS.Joker {
+    key = "Enter card's key.",
+    atlas = "MyJokers",
+    pos = { x = 0, y = 0 },    -- Position is based on position in MyJokers.pgn file.
+    rarity = 1,
+    cost = 1,
+    blueprint_compat = true,
+    eternal_compat = true,
+    perishable_compat = true,
+
+    loc_txt = {
+        name = "Give card a name...",
+        text = {
+            "(Write description for card...)",
+            "Use commas to create multiple lines",
+            "of text on the card."
+        }
+    },
+
+    config = {},
+
+    calculate = function(self, card, context)
+        -- Enter card effects here...
+    end
+]]
+
+----------------------------------------------
 -- Amplifier
 ----------------------------------------------
 -- Doubles the chips, mult, and xmult given by the jokers
