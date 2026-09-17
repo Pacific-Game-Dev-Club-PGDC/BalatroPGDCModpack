@@ -1,0 +1,11 @@
+{
+    "id": "PGDCModpack",
+    "name": "PGDCModpack",
+    "author": ["Pacific Game Dev Club"],
+    "description": "Club collaboration of unique Balatro Cards.",
+    "prefix": "myjm",
+    "main_file": "main.lua",
+    "version": "1.0.0",
+    "priority": 0,
+    "badge_colour": "4C6E9C"
+}
