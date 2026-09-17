@@ -5,6 +5,7 @@ Color Values
 ----------------------------------
 
 G.C = {
+
     MULT       = HEX('FE5F55'),   -- coral red — same value as RED
     XMULT      = HEX('FE5F55'),   -- identical to MULT
     CHIPS      = HEX('009dff'),   -- bright blue — same value as BLUE
