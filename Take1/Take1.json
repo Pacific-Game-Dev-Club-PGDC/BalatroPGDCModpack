@@ -1,0 +1,9 @@
+{
+  "id": "Take1",
+  "name": "Take 1",
+  "author": ["muzzorright"],
+  "description": "First balatro mod attempt.",
+  "prefix": "take1",
+  "main_file": "take1.lua",
+  "version": "0.0.1"
+}
